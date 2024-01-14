@@ -119,7 +119,7 @@ document.body.addEventListener("click", (e) => {
 let string2 = "JavaScript est un langage orienté objet";
 
 // console.log(eval("1" + 2));
-// console.log(parseInt("1") + 2);
+console.log(parseInt("1") + 2);
 // console.log(isNaN(string));
 
 // console.log(string2.length);
@@ -284,7 +284,7 @@ const dateDestructuring = (chaine) => {
   return [d, m, y].join(" / ");
 };
 
-// console.log(dateDestructuring(iso));
+console.log(dateDestructuring(iso));
 
 //*********************************Les Datasets **************************************************** */
 
