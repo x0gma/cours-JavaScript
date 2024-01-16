@@ -1,28 +1,21 @@
-// 1 - Tester le lien de l'API dans le navigateur (https://restcountries.com/v3.1/all)
-
-// 2 - Créer une fonction pour "fetcher" les données, afficher les données dans la console.
-
-// 3 - Passer les données à une variable // J'ai besoin du Drapeau, du nom du pays, de la capitale et enfin de la population.
-
-// 4 - Créer une fonction d'affichage, et paramétrer l'affichage des cartes de chaque pays grace à la méthode MAP
-
-// 5 - Récupérer ce qui est tapé dans l'input et filtrer (avant le map) les données
-// coutry.name.includes(inputSearch.value);
-
-// 6 - Avec la méthode Slice gérer le nombre de pays affichés (inputRange.value)
-
-// 7 - Gérer les 3 boutons pour trier (méthode sort()) les pays
-// let countries = [];
-
-// async function fetchCountries() {
-//   await fetch("https://restcountries.com/v3.1/all")
-//     .then((res) => res.json())
-//     .then((res) => (countries = res));
-
-//   console.log(countries);
-// }
 const card = document.querySelector(".card");
 let countries = [];
+let countriesRange = [];
+
+const countryDisplay = (tab) => {
+  card.innerHTML = tab
+    .map((country) => {
+      return `
+      <li>
+        <img src="${country.flag}" alt="${country.flagAlt}"></img>
+        <h3>${country.name}</h3>
+        <p>${country.capital}</p>
+        <span>Population : ${country.population}</span>
+        </li>
+        `;
+    })
+    .join("");
+};
 
 async function fetchCountries() {
   await fetch("https://restcountries.com/v3.1/all")
@@ -32,34 +25,46 @@ async function fetchCountries() {
         return {
           flag: country.flags.png,
           flagAlt: country.flags.alt,
-          name: country.name.common,
+          name: country.translations.fra.common,
           capital: country.capital,
           population: country.population,
         };
       });
     });
-
-  console.log(countries);
+  countries.sort((a, b) => b.population - a.population);
+  countriesRange = countries.slice(0, 24);
+  countryDisplay(countriesRange);
 }
 
 fetchCountries();
 
-const countryDisplay = () => {
-  card.innerHTML = countries
-    .map((country) => {
-      return `
-      <li>
-        <img src="${country.flag}" alt="${country.flagAlt}"></img>
-        <h3>${country.name}</h3>
-        <p>${country.capital}</p>
-        <span>${country.population}</span>
-        </li>
-        `;
-    })
-    .join("");
-};
+inputSearch.addEventListener("input", (e) => {
+  const searchTerm = e.target.value.toLowerCase();
+  let countriesSearch = countriesRange;
+
+  countriesSearch = countriesRange.filter((country) => {
+    return country.name.toLowerCase().includes(searchTerm);
+  });
+  countryDisplay(countriesSearch);
+});
 
 inputRange.addEventListener("input", (e) => {
   rangeValue.textContent = e.target.value;
-  countryDisplay();
+  countriesRange = countries.slice(0, parseInt(e.target.value));
+  countryDisplay([...countriesRange]);
+});
+
+minToMax.addEventListener("click", () => {
+  countriesRange.sort((a, b) => a.population - b.population);
+  countryDisplay(countriesRange);
+});
+
+maxToMin.addEventListener("click", () => {
+  countriesRange.sort((a, b) => b.population - a.population);
+  countryDisplay(countriesRange);
+});
+
+alpha.addEventListener("click", () => {
+  countriesRange.sort((a, b) => a.name.localeCompare(b.name));
+  countryDisplay(countriesRange);
 });
