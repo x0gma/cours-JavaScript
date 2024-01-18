@@ -1,6 +1,6 @@
 class Question {
-  constructor(question, options, answer) {
-    this.question = question;
+  constructor(text, options, answer) {
+    this.text = text;
     this.options = options;
     this.answer = answer;
   }
@@ -32,29 +32,81 @@ const questions = [
   ),
 ];
 
-//////////////////// Créer une class Quizz afin de coder la logique du quizz ////////////////////
-/// constructor
-/// méthode pour get la question en cours
-/// méthode pour les guess (incrémenter le score et la question en cours)
-/// méthode pour déterminer si le quizz est terminé ou non
+class Quiz {
+  constructor(questions) {
+    this.score = 0;
+    this.questions = questions;
+    this.questionIndex = 0;
+  }
 
-//////////////////// Créer un objet display afin de coder la logique de l'affichage ////////////////////
+  getCurrentQuestion() {
+    return this.questions[this.questionIndex];
+  }
 
-/// méthode pour afficher un élément
-//****syntaxe****
-// méthode : function (paramètre1, paramètre2, ...) {}
+  guess(answer) {
+    if (this.getCurrentQuestion().isCorrectAnswer(answer)) {
+      this.score++;
+    }
 
-///méthode pour afficher la question (reprends la méthode ci-dessus)
+    this.questionIndex++;
+  }
 
-///méthode pour afficher les choix
+  hasEnded() {
+    return this.questionIndex >= this.questions.length;
+  }
+}
 
-//méthode pour afficher l'avancement dans le quizz (1/4)
+const display = {
+  showElement: function (id, text) {
+    let element = document.getElementById(id);
+    element.innerHTML = text;
+  },
 
-//méthode pour afficher ce qu'il se passe lorsque le quizz est terminé
+  question: function () {
+    this.showElement("question", quiz.getCurrentQuestion().text);
+  },
 
-///////////////////// Créer une fonction quizApp qui associe la logique du quizz à l'affichage ////////////////////
-// quizApp = () => {};
+  options: function () {
+    let options = quiz.getCurrentQuestion().options;
 
-///////////////////// enfin créer le quizz ////////////////////
-// let quiz = new Quiz(questions);
-// quizApp();
+    guessHandler = (id, guess) => {
+      document.getElementById(id).onclick = function () {
+        quiz.guess(guess);
+        quizApp();
+      };
+    };
+
+    for (i = 0; i < options.length; i++) {
+      this.showElement("guess" + i, options[i]);
+      guessHandler("guess" + i, options[i]);
+    }
+  },
+
+  progress: function () {
+    this.showElement(
+      "progress",
+      `${quiz.questionIndex} / ${quiz.questions.length} `
+    );
+  },
+
+  endQuiz: function () {
+    let endQuizHTML = `
+    <h1>Quizz terminé !</h1>
+    <h3>Votre score est de : ${quiz.score} / ${quiz.questions.length}</h3>
+    `;
+    this.showElement("quiz", endQuizHTML);
+  },
+};
+
+quizApp = () => {
+  if (quiz.hasEnded()) {
+    display.endQuiz();
+  } else {
+    display.question();
+    display.options();
+    display.progress();
+  }
+};
+
+let quiz = new Quiz(questions);
+quizApp();
