@@ -10,7 +10,7 @@ const speed = 6;
 const size = [51, 36];
 const jump = -6;
 const cTenth = canvas.width / 10;
-const speedAdjust = 0.25;
+const speedAdjust = 0.25; // constante d'ajustement car MAJ de la vitesse d'execution de JS
 
 const pipeWidth = 78;
 const pipeGap = 270;
@@ -38,6 +38,7 @@ const setup = () => {
 const render = () => {
   index = index + 1 * speedAdjust;
 
+  //Background
   ctx.drawImage(
     img,
     0,
@@ -62,6 +63,7 @@ const render = () => {
     canvas.height
   );
 
+  //Bird
   if (gamePlaying) {
     ctx.drawImage(
       img,
@@ -84,6 +86,7 @@ const render = () => {
       flyHeight,
       ...size
     );
+
     flyHeight = canvas.height / 2 - size[1] / 2;
 
     ctx.fillText(`Meilleur score : ${bestScore}`, 55, 245);
@@ -91,6 +94,7 @@ const render = () => {
     ctx.font = "bold 30px courier";
   }
 
+  //Pipes
   if (gamePlaying) {
     pipes.map((pipe) => {
       pipe[0] -= speed * speedAdjust;
@@ -118,6 +122,7 @@ const render = () => {
         canvas.height - pipe[1] + pipeGap
       );
 
+      //delete + generate pipes
       if (pipe[0] <= -pipeWidth) {
         currentScore++;
         bestScore = Math.max(bestScore, currentScore);
@@ -128,6 +133,7 @@ const render = () => {
         ];
       }
 
+      //gameover conditions
       if (
         [
           pipe[0] <= cTenth + size[0],
